@@ -1,0 +1,92 @@
+service: vtutor-serverless
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ${env:region, 'us-west-2'}
+  stage: ${opt:stage}
+  stackName: vtutor-serverless
+  apiName: vtutor-api
+  endpointType: REGIONAL
+  logRetentionInDays: 3
+  timeout: 30
+  apiGateway:
+    apiKeySourceType: HEADER
+  apiKeys:
+    - vtutor-${self:provider.stage}-web-key
+  role: VTutorLambdaRole
+
+plugins:
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    noPrependStageInUrl: true
+
+functions:
+  UserHandler:
+    name: UserHandler
+    handler: dist/controllers/userApiHandler.handler
+    memorySize: 128
+    events:
+      - http:
+          method: post
+          path: "user"
+          cors: true
+      - http:
+          method: get
+          path: "user"
+          request:
+            parameters:
+              querystrings:
+                companyId: false
+          cors: true
+      - http:
+          method: get
+          path: "user/{userId}"
+          request:
+            parameters:
+              paths:
+                userId: true
+          cors: true
+      - http:
+          method: put
+          path: "user/{userId}"
+          request:
+            parameters:
+              paths:
+                userId: true
+          cors: true
+      - http:
+          method: delete
+          path: "user/{userId}"
+          request:
+            parameters:
+              paths:
+                userId: true
+          cors: true
+
+package:
+  exclude:
+    - .git/**
+    - test/**
+    - .idea/**
+    - src/**
+    - node_modules/**
+    - package.json
+    - 'package-lock.json'
+    - tsconfig.json
+    - resources/**
+  include:
+    - dist/**
+    - node_modules/uuid/**
+
+resources:
+  # Gateway Responses
+  - ${file(resources/gateway-response.yml)}
+
+  # IAM
+  - ${file(resources/iam.yml)}
+
+  # DynamoDB
+  - ${file(resources/dynamodb.yml)}

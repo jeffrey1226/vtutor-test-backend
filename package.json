@@ -1,0 +1,23 @@
+{
+  "name": "vtutor-backend",
+  "version": "1.0.0",
+  "description": "vTutor Test Backend",
+  "scripts": {
+    "start": "rm -rf dist && tsc && sls offline --stage dev",
+    "build": "tsc",
+    "deploy:dev": "npm run build && sls deploy --stage dev",
+    "deploy:prod": "npm run build && sls deploy --stage production",
+    "debug": "tsc -p tsconfig-test.json"
+  },
+  "dependencies": {
+    "uuid": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.51",
+    "@types/node": "^13.13.2",
+    "@types/uuid": "^3.4.6",
+    "aws-sdk": "^2.597.0",
+    "serverless-offline": "^6.8.0",
+    "typescript": "^3.7.4"
+  }
+}
