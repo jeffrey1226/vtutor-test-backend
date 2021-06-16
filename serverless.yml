@@ -22,6 +22,7 @@ plugins:
 custom:
   serverless-offline:
     noPrependStageInUrl: true
+    httpPort: 4000
 
 functions:
   UserHandler:
